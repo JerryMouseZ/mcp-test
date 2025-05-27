@@ -1,0 +1,21 @@
+# Use an official Node.js slim image (Node.js v20.x)
+FROM node:20-slim
+
+# Set the working directory in the container
+WORKDIR /usr/src/app
+
+# Copy package.json and package-lock.json (if available)
+# This step is included for good practice, though mcp_server_stdio.js has no external deps.
+COPY package.json ./
+COPY package-lock.json ./
+
+# Install dependencies (if any for the server script itself)
+# Using --omit=dev to only install production dependencies.
+# For mcp_server_stdio.js, this might not install anything new if no specific deps.
+RUN npm install --omit=dev --no-fund --no-audit
+
+# Copy the server script into the container
+COPY mcp_server_stdio.js .
+
+# Set the command to run the application
+CMD ["node", "mcp_server_stdio.js"]
